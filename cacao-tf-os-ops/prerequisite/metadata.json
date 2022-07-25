@@ -1,0 +1,43 @@
+{
+	"name": "prerequisite openstack",
+	"author": "Edwin Skidmore",
+	"author_email": "edwin@cyverse.org",
+	"description": "prerequisite template for openstack",
+	"template_type": "openstack_terraform",
+	"purpose": "general",
+	"cacao_post_tasks": [
+		{
+			"type": "ansible",
+			"location_type": "cacao_atmosphere_legacy"
+		}
+	],
+	"parameters": {
+		"username": {
+			"type": "string",
+			"ui_label": "CACAO username",
+			"description": "CACAO username"
+		},
+		"external_network_uuid": {
+			"type": "string",
+			"ui_label": "External network UUID",
+			"description": "External network UUID"
+		},
+		"tenant_cidr": {
+			"type": "string",
+			"default": "10.0.0.0/24",
+			"ui_label": "Tenant CIDR",
+			"description": "Tenant CIDR"
+		},
+		"keypair_name": {
+			"type": "string",
+			"default": "cacao-ssh-key",
+			"ui_label": "Key-pair name",
+			"description": "Key-pair name"
+		},
+		"public_ssh_key": {
+			"type": "string",
+			"ui_label": "Public SSH key",
+			"description": "Public SSH key"
+		}
+	}
+}

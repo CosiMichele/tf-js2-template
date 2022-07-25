@@ -1,0 +1,18 @@
+username = "someuser"
+project = "someproject"
+instance_name = "testinstance"
+instance_count = 1
+image = "some-image-uuid"
+flavor = "m3.small"
+#flavor_master = "m3.medium"
+keypair = "someuser-keypair"
+power_state = "active"
+ip_pool = "public"
+user_data = ""
+do_ansible_execution=true
+
+# optional
+#master_floating_ip = "1.2.3.4"
+#master_hostname = "www.randomname.com"
+#do_enable_gpu = false
+#k3s_traefik_disable = false

@@ -1,0 +1,215 @@
+- hosts: all
+  gather_facts: false
+  become: true
+  tags: ssh
+  vars:
+    SSHD_CHANGES:
+      - regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+        state: 'present'
+
+      - regexp: '^UseDNS'
+        line: 'UseDNS no'
+        state: 'present'
+
+      - regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+        state: 'present'
+
+      - regexp: '^ClientAliveInterval'
+        line: 'ClientAliveInterval 10 # send null packet every x seconds to clients'
+        state: 'present'
+
+      - regexp: '^ClientAliveCountMax'
+        line: 'ClientAliveCountMax 180 # time them out after doing so y times'
+        state: 'present'
+
+  pre_tasks:
+  - name: WAIT_FOR_CONNECTION; poll every 10s for a max of 10m
+    wait_for_connection:
+      sleep: 10
+      timeout: 600
+      
+  - name: SHELL; shell connection test
+    shell: echo "hello"
+    retries: 30
+    delay: 5
+    vars:
+      ansible_ssh_pipelining: no
+
+  - name: LINEINFILE; remove 'Defaults requiretty', if it exists
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'Defaults requiretty'
+      state: absent
+    vars:
+        ansible_ssh_pipelining: no
+
+  - name: GATHER_FACTS
+    gather_facts:
+
+  tasks:
+  - block:
+    - name: USER; add students
+      user:
+        name: "{{ item.key }}"
+        shell: "/bin/bash"
+        append: yes
+        groups:
+          - "sudo"
+          - "docker"
+        password: "{{ item.value.password | password_hash('sha512') }}"
+      loop: "{{ students| dict2items }}"
+
+    - name: LINEINFILE; make changes to /etc/ssh/sshd_config
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        backup: true
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        state: "{{ item.state }}"
+      loop: "{{ SSHD_CHANGES }}"
+      register: sshd_config
+
+    - name: SYSTEMD; restart ssh
+      systemd:
+        name: ssh
+        state: restarted
+      when: sshd_config.changed
+
+    when: students is defined and students|length > 0
+
+  - name: LINEINFILE; update /etc/sudoers to be no passwd
+    lineinfile:
+      path: /etc/sudoers
+      backup: yes
+      regexp: '^%sudo'
+      line: '%sudo ALL=(ALL:ALL) NOPASSWD: ALL'
+
+  # - name: GETENT; check if instructor user exists
+  #   getent:
+  #     database: passwd
+  #     key: "{{ instructor_username }}"
+  #     fail_key: false
+
+  # - debug:
+  #     var: ansible_facts.getent_passwd
+
+  # - name: USER; add instructor user to docker and sudo
+  #   user:
+  #     name: "{{ instructor_username }}"
+  #     append: yes
+  #     groups:
+  #       - "docker"
+  #   when: ansible_facts.getent_passwd[instructor_username] != None
+
+  - name: LINEINFILE; add additional instructors to the root account
+    lineinfile:
+      dest: /root/.ssh/authorized_keys
+      line: "{{ item | b64decode }}"
+      state: "present"
+    loop: "{{ instructors_ssh_keys_base64 }}"
+  
+  - name: APT; install packages
+    apt:
+      name:
+        - mosh
+      update_cache: yes
+
+# This should eventually be moved out into an ansible role
+# Just add to all hosts jic
+- hosts: all
+  tags: manilashare
+  become: true
+  tasks:
+  - block:
+
+    - name: COPY; create the manila secret /etc/ceph.{{ SHARE_ACCESS_TO }}.secret
+      copy:
+        dest: "/etc/ceph.{{ SHARE_ACCESS_TO }}.secret"
+        content: |
+          {{ SHARE_ACCESS_KEY }}
+        backup: yes
+ 
+    - name: MOUNT; mount the MANILA_MOUNT
+      ansible.posix.mount:
+        src: "{{ SHARE_EXPORT_PATH}}"
+        path: "{{ SHARE_MOUNT_PATH }}"
+        fstype: "ceph"
+        opts: "name={{ SHARE_ACCESS_TO }},secretfile=/etc/ceph.{{ SHARE_ACCESS_TO }}.secret,,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw"
+        passno: "2"
+        backup: yes
+        state: mounted
+
+    - name: FILE; ensure {{ SHARE_MOUNT_PATH }} has all permissions
+      file:
+        path: "{{ SHARE_MOUNT_PATH }}"
+        state: directory
+        mode: "0777"
+    when: SHARE_ENABLE is defined and SHARE_ENABLE|bool
+
+
+- hosts: all
+  become: true
+  tags: vnc
+  tasks:
+  - block:
+    - name: SET_FACT; set the VNC_USERS
+      set_fact:
+        VNC_USERS: "{{ students }}"
+      when: students is defined and VNC_USERS is not defined
+
+    - import_role: 
+        name: cyverse-ansible.ansible_vnc_setup
+
+    - name: SET_FACT; setting vm4workshop_users to students
+      set_fact:
+        vm4workshop_users: "{{ students }}"
+      when: students is defined
+
+    - name: SET_FACT; setting vm4workshop_users to VNC_USERS
+      set_fact:
+        vm4workshop_users: "{{ VNC_USERS }}"
+      when: VNC_USERS is defined
+  
+    - name: GETENT; check if user exists
+      getent:
+        database: passwd
+        fail_key: false
+
+    - name: FILE; create the .ssh directory if it doesn't exist
+      file:
+        path: "/home/{{ item.key }}/.ssh"
+        state: directory
+        mode: "0755"
+        owner: "{{ item.key }}"
+        group: "{{ item.key }}"
+      loop: "{{ vm4workshop_users|dict2items }}"
+      when: ansible_facts.getent_passwd[item.key] is defined
+
+    - name: COPY; create the rc file that will be the user's motd
+      copy:
+        dest: "/home/{{ item.key }}/.ssh/rc"
+        content: |
+          #!/bin/bash
+
+          echo
+          echo "Your vnc session:"
+          echo "   display :{{ item.value.display_number }}"
+          echo "   port:   590{{ item.value.display_number }}"
+          echo
+          echo "You can use ssh forwarding to access your desktop. If you're using a command line ssh, an example command is:"
+          echo
+          echo "   ssh -L 590{{ item.value.display_number }}:localhost:590{{ item.value.display_number }} {{ item.key }}@{{ ansible_host }}"
+          echo
+          echo "Then you can use a vnc viewer to connect to your desktop at 'localhost:{{ item.value.display_number }}'"
+          echo
+          echo "A free vnc viewer can be found here: https://www.realvnc.com/en/connect/download/viewer/"
+          echo
+        mode: "0750"
+        owner: "{{ item.key }}"
+        group: "{{ item.key }}"
+      loop: "{{ vm4workshop_users|dict2items }}"
+      when: ansible_facts.getent_passwd[item.key] is defined
+
+    when: VNC_USERS is defined or students is defined

@@ -1,0 +1,32 @@
+{
+  "name": "create_and_attach_volume",
+  "author": "Jeremy Frady",
+  "author_email": "jeremyfrady@cyverse.org",
+  "description": "",
+  "template_type": "openstack_terraform",
+  "purpose": "storage",
+  "cacao_post_tasks": [],
+  "parameters": {
+    "instance_id": {
+      "type": "string",
+      "ui_label": "Instance ID",
+      "description": "Instance ID, only required if attach is true",
+      "default": ""
+    },
+    "volume_name": {
+      "type": "string",
+      "ui_label": "Volume name",
+      "description": "Volume name"
+    },
+    "volume_size": {
+      "type": "integer",
+      "ui_label": "Volume size",
+      "description": "Volume size in gigabytes"
+    },
+    "attach": {
+      "type": "bool",
+      "description": "whether or not to attach the volume to the specified instance",
+      "default": false
+    }
+  }
+}

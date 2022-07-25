@@ -1,0 +1,10 @@
+*.tfvars
+tf.out
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+tmp
+plan.out
+single-image-k3s/ansible/hosts.yml
+vms4workshop/ansible/hosts.yml

@@ -1,0 +1,7 @@
+roles: 
+- src: cyverse-ansible.docker
+- src: cyverse-ansible.ansible_k3s
+
+collections:
+- community.docker
+- ansible.posix

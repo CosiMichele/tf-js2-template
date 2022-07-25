@@ -1,0 +1,149 @@
+{
+  "name": "vms 4 workshop",
+  "author": "Edwin Skidmore",
+  "author_email": "edwin@cyverse.org",
+  "description": "launch instances for a workshop",
+  "template_type": "openstack_terraform",
+  "purpose": "compute",
+  "cacao_post_tasks": [
+    {
+      "type": "ansible",
+      "location_type": "cacao_atmosphere_legacy"
+    }
+  ],
+  "parameters": {
+    "username": {
+      "type": "cacao_username",
+      "default": "username",
+      "ui_label": "CACAO username",
+      "description": "CACAO username"
+    },
+    "instance_name": {
+      "type": "string",
+      "ui_label": "Instance name",
+      "description": "Instance name"
+    },
+    "instance_instructor_count": {
+      "type": "integer",
+      "default": 1,
+      "ui_label": "# of instructor instances",
+      "description": "# of instructor instances"
+    },
+    "instructor_username": {
+      "type": "string",
+      "default": "instructor",
+      "ui_label": "instructor username",
+      "description": "username of instructor account that will be setup on all instructor instances"
+    },
+    "instructors_ssh_keys_base64": {
+      "type": "array-strings",
+      "required": true,
+      "description": "array of base64-encoded public ssh keys, deposited on ever root account for every vm",
+      "ui_label": "instructor's ssh keys"
+    },
+    "students_per_instance": {
+      "type": "integer",
+      "default": 1,
+      "ui_label": "students per instance",
+      "description": "number of students to assign per instance"
+    },
+    "min_instances": {
+      "type": "integer",
+      "default": 1,
+      "ui_label": "minimum student instances",
+      "description": "minumum number of students instances to provision, regardless of student list"
+    },
+    "student_usernames": {
+      "type": "array-strings",
+      "required": true,
+      "description": "array of student usernames",
+      "ui_label": "student usernames"
+    },
+    "image": {
+      "type": "cacao_provider_image",
+      "ui_label": "Boot image",
+      "description": "Boot image"
+    },
+    "flavor": {
+      "type": "cacao_provider_flavor",
+      "ui_label": "Flavor",
+      "description": "Instance type"
+    },
+    "project": {
+      "type": "cacao_provider_project",
+      "ui_label": "Project ID",
+      "description": "OpenStack Project ID"
+    },
+    "region": {
+      "type": "cacao_provider_region",
+      "ui_label": "Region",
+      "description": "OpenStack Region",
+      "default": "IU"
+    },
+    "keypair": {
+      "type": "cacao_provider_key_pair",
+      "default": "cacao-ssh-key",
+      "ui_label": "Key-pair",
+      "description": "Key-pair for instance access"
+    },
+    "power_state": {
+      "type": "string",
+      "default": "active",
+      "enum": [
+        "active",
+        "shutoff",
+        "suspend",
+        "shelved_offloaded"
+      ],
+      "ui_label": "Power state",
+      "description": "Power state"
+    },
+    "ip_pool": {
+      "type": "cacao_provider_external_network",
+      "default": "external_network_name",
+      "ui_label": "IP pool",
+      "description": "IP pool"
+    },
+    "user_data": {
+      "type": "cacao_cloud_init",
+      "description": "cloud init script"
+    },
+    "share_name": {
+      "type": "string",
+      "description": "name of share",
+      "ui_label": "share name",
+      "required": "false",
+      "default": ""
+    },
+    "share_mount_path": {
+      "type": "string",
+      "description": "mount path of share",
+      "ui_label": "mount path",
+      "required": "false",
+      "default": "/mnt/class_data"
+    },
+    "share_access_key": {
+      "type": "string",
+      "description": "share access key",
+      "ui_label": "access key",
+      "required": "false",
+      "default": ""
+    },
+    "share_access_level": {
+      "type": "string",
+      "ui_label": "Share Access Level",
+      "description": "Share access level, which was originally set upon creation",
+      "default": "rw",
+      "enum": [
+        "rw",
+        "ro"
+      ]
+    },
+    "share_access_to": {
+      "type": "string",
+      "ui_label": "Share Access To",
+      "description": "The name of the access_to field of share access; if not set, will default to ${share_name}_access_${share_access_level}",
+      "default": ""
+    }
+  }
+}

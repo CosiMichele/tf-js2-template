@@ -1,0 +1,54 @@
+{
+  "name": "create_share",
+  "author": "Jeremy Frady",
+  "author_email": "jeremyfrady@cyverse.org",
+  "description": "",
+  "template_type": "openstack_terraform",
+  "purpose": "storage",
+  "cacao_post_tasks": [],
+  "parameters": {
+    "share_name": {
+      "type": "string",
+      "ui_label": "Share name",
+      "description": "Share name"
+    },
+    "share_description": {
+      "type": "string",
+      "ui_label": "Share description",
+      "description": "Share description",
+      "default": "description of share"
+    },
+    "share_protocol": {
+      "type": "string",
+      "ui_label": "Share protocol",
+      "description": "Share protocol",
+      "default": "CEPHFS"
+    },
+    "share_access_type": {
+      "type": "string",
+      "ui_label": "Share type",
+      "description": "Share type",
+      "default": "cephx"
+    },
+    "share_access_level": {
+      "type": "string",
+      "ui_label": "Share Access Level",
+      "description": "Share access level",
+      "default": "rw",
+      "enum": [
+        "rw",
+        "ro"
+      ]
+    },
+    "share_size": {
+      "type": "string",
+      "ui_label": "Share size",
+      "description": "Share size"
+    },
+    "share_region": {
+      "type": "string",
+      "ui_label": "share region",
+      "description": "the region for share"
+    }
+  }
+}

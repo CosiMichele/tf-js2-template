@@ -1,0 +1,26 @@
+{
+  "name": "attach_volume",
+  "author": "Jeremy Frady",
+  "author_email": "jeremyfrady@cyverse.org",
+  "description": "",
+  "template_type": "openstack_terraform",
+  "purpose": "storage",
+  "cacao_post_tasks": [],
+  "parameters": {
+    "instance_id": {
+      "type": "string",
+      "ui_label": "Instance ID",
+      "description": "Instance ID"
+    },
+    "volume_id": {
+      "type": "string",
+      "ui_label": "Volume ID",
+      "description": "Volume ID"
+    },
+    "attach": {
+      "type": "bool",
+      "description": "whether or not to attach the volume to the specified instance",
+      "default": false
+    }
+  }
+}

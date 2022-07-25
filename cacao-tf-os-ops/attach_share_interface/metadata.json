@@ -1,0 +1,21 @@
+{
+  "name": "attach_share_interface",
+  "author": "Jeremy Frady",
+  "author_email": "jeremyfrady@cyverse.org",
+  "description": "",
+  "template_type": "openstack_terraform",
+  "purpose": "compute",
+  "cacao_post_tasks": [],
+  "parameters": {
+    "instance_uuid": {
+      "type": "string",
+      "ui_label": "Instance UUID",
+      "description": "Instance UUID"
+    },
+    "share_network_uuid": {
+      "type": "string",
+      "ui_label": "Share network UUID",
+      "description": "Share network UUID"
+    }
+  }
+}

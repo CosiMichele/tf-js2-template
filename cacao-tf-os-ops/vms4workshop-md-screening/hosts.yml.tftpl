@@ -1,0 +1,49 @@
+# This is a general purpose terraform -> ansible inventory template
+# Using this template, there are many ways to refer to hosts
+#   'all' can be used to refer to all hosts, of course
+#   'group_name[0]'
+#   name of resource + index
+# The k3-* groups should be left in for ansible-k3s, if we want to be able to use it
+# if you want to change the template on an existing `terraform apply` or change the inputs, just do another `terraform apply` and the new inventory will be generated
+all:
+    hosts:
+%{ for index, group in instructor_instance_ips ~}
+        ${ instructor_instance_names[index] }:
+            ansible_host: ${ instructor_instance_ips[index] }
+            ansible_user: "ubuntu"
+            students:
+              ${ instructor_username }:
+                password: ${ instructor_password }
+                display_number: 6
+%{ endfor ~}
+%{ for index,group in combined_student_list ~}
+%{ if index % students_per_instance == 0 ~}
+
+        ${ combined_student_list[index][2] }:
+            ansible_host: ${ combined_student_list[index][3] }
+            ansible_user: ubuntu
+%{ if combined_student_list[index][0] != "none" }
+            students:
+%{ endif ~}
+%{ endif ~}
+%{ if combined_student_list[index][0] != "none" }
+              ${ combined_student_list[index][0] }: 
+                password: ${ combined_student_list[index][1] }
+                display_number: ${ 6 + index % students_per_instance }
+%{ endif ~}
+%{ endfor ~}
+    vars:
+        instructors_ssh_keys_base64:
+%{ for k in instructors_ssh_keys_base64 ~}
+          - ${ k }
+%{ endfor ~}
+%{ if share_name == "" }
+        SHARE_ENABLE: false
+%{ else ~}
+        SHARE_ENABLE: true
+        SHARE_NAME: ${ share_name }
+        SHARE_ACCESS_KEY: ${ share_access_key }
+        SHARE_MOUNT_PATH: ${ share_mount_path }
+        SHARE_ACCESS_TO: ${ share_access_to }
+        SHARE_EXPORT_PATH: ${ share_export_path }
+%{ endif ~}

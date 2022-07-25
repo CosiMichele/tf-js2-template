@@ -1,0 +1,21 @@
+{
+  "name": "create_volume",
+  "author": "Jeremy Frady",
+  "author_email": "jeremyfrady@cyverse.org",
+  "description": "",
+  "template_type": "openstack_terraform",
+  "purpose": "storage",
+  "cacao_post_tasks": [],
+  "parameters": {
+    "volume_name": {
+      "type": "string",
+      "ui_label": "Volume name",
+      "description": "Volume name"
+    },
+    "volume_size": {
+      "type": "string",
+      "ui_label": "Volume size",
+      "description": "Volume size"
+    }
+  }
+}

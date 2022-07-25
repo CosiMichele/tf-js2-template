@@ -1,0 +1,101 @@
+- hosts: all
+  gather_facts: no
+  become: true
+  tags: docker
+  tasks:
+  - name: WAIT_FOR_CONNECTION; poll every 10s for a max of 10m
+    wait_for_connection:
+      sleep: 10
+      timeout: 600
+      
+  - name: SHELL; shell connection test
+    shell: echo "hello"
+    retries: 30
+    delay: 5
+    vars:
+      ansible_ssh_pipelining: no
+
+  - name: LINEINFILE; remove 'Defaults requiretty', if it exists
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'Defaults requiretty'
+      state: absent
+    vars:
+        ansible_ssh_pipelining: no
+
+  - name: GATHER_FACTS
+    gather_facts:
+
+# This section is for k3s
+- hosts: k3s_cluster
+  tags: k3s_install
+  become: true
+  roles:
+  - cyverse-ansible.ansible_k3s
+
+# This section is for installing k3s tools
+- hosts: k3s_masters
+  tags: k3s_tools
+  become: true
+  tasks:
+  - name: SHELL; download the latest kubectl
+    shell: 
+      cmd: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chdir: /tmp
+
+  - name: SHELL; install kubectl
+    shell:
+      cmd: install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      chdir: /tmp
+
+  - name: FILE; set permissions for /etc/rancher/k3s/k3s.yaml 
+    file:
+      path: /etc/rancher/k3s/k3s.yaml
+      mode: 0744
+
+  - name: FILE; create .kube dir for root
+    file:
+      path: /root/.kube
+      mode: 0700
+      state: directory
+
+  - name: FILE; create .kube dir for ansible_user
+    file:
+      path: "/home/{{ ansible_user }}/.kube"
+      mode: 0700
+      state: directory
+    become: false
+
+  - name: FILE; link /etc/rancher/k3s/k3s.yaml for root
+    file:
+      src: "/etc/rancher/k3s/k3s.yaml"
+      dest: "/root/.kube/config"
+      state: link
+
+  - name: FILE; link /etc/rancher/k3s/k3s.yaml for ansible_user
+    file:
+      src: "/etc/rancher/k3s/k3s.yaml"
+      dest: "/home/{{ ansible_user }}/.kube/config"
+      state: link
+    become: false
+
+  - name: STAT; check if user exists in /home directory, otherwise punt this section
+    stat:
+      path: "/home/{{ CACAO_USER }}"
+    register: home_dir
+
+  - block: 
+    - name: FILE; create .kube dir for {{ CACAO_USER }}
+      file:
+        path: "/home/{{ CACAO_USER }}/.kube"
+        owner: "{{ CACAO_USER }}"
+        mode: 0700
+        state: directory
+
+    - name: FILE; link /etc/rancher/k3s/k3s.yaml for {{ CACAO_USER }}
+      file:
+        src: "/etc/rancher/k3s/k3s.yaml"
+        dest: "/home/{{ CACAO_USER }}/.kube/config"
+        state: link
+
+    when: home_dir.stat.isdir is defined and home_dir.stat.isdir

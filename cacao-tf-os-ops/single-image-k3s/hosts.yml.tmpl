@@ -1,0 +1,37 @@
+# This is a general purpose terraform -> ansible inventory template
+# Using this template, there are many ways to refer to hosts
+#   'all' can be used to refer to all hosts, of course
+#   'group_name[0]'
+#   name of resource + index
+# The k3-* groups should be left in for ansible-k3s, if we want to be able to use it
+# if you want to change the template on an existing `terraform apply` or change the inputs, just do another `terraform apply` and the new inventory will be generated
+all:
+    hosts:
+        ${ master_name}:
+            ansible_host: ${ k3s_hostname }
+            ansible_user: ubuntu
+%{ for index, group in worker_ips }
+        ${ worker_names[index] }:
+            ansible_host: ${ worker_ips[index] }
+            ansible_user: ubuntu
+%{ endfor }
+    vars:
+        CACAO_USER: ${ cacao_user }
+    children:
+        k3s_masters:
+            hosts:
+                ${ master_name }:
+        k3s_agents:
+            hosts:
+%{ for index, group in worker_names }
+                ${ worker_names[index] }:
+%{ endfor }
+        k3s_cluster:
+            children:
+                k3s_masters:
+                k3s_agents:
+            vars:
+                K3S_TRAEFIK_ENABLE: ${ !traefik_disable }
+%{ if gpu_enable }
+                K3S_GPU_ENABLE: ${ gpu_enable }
+%{ endif }

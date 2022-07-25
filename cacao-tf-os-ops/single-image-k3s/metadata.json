@@ -1,0 +1,88 @@
+{
+  "name": "single image with k3s",
+  "author": "Edwin Skidmore",
+  "author_email": "edwin@cyverse.org",
+  "description": "launch a multi-vm kubernetes cluster (k3s)",
+  "template_type": "openstack_terraform",
+  "purpose": "compute",
+  "cacao_post_tasks": [
+    {
+      "type": "ansible",
+      "location_type": "cacao_k3s"
+    }
+  ],
+  "parameters": {
+    "username": {
+      "type": "cacao_username",
+      "default": "username",
+      "ui_label": "CACAO username",
+      "description": "CACAO username"
+    },
+    "instance_name": {
+      "type": "string",
+      "ui_label": "Instance name",
+      "description": "Instance name"
+    },
+    "instance_count": {
+      "type": "integer",
+      "default": 1,
+      "ui_label": "# of Instances",
+      "description": "# of instances"
+    },
+    "image": {
+      "type": "cacao_provider_image",
+      "ui_label": "Boot image",
+      "description": "Boot image"
+    },
+    "flavor": {
+      "type": "cacao_provider_flavor",
+      "ui_label": "Worker Flavor",
+      "description": "Instance size/type for worker instances"
+    },
+    "project": {
+      "type": "cacao_provider_project",
+      "ui_label": "Project ID",
+      "description": "OpenStack Project ID"
+    },
+    "keypair": {
+      "type": "cacao_provider_key_pair",
+      "default": "cacao-ssh-key",
+      "ui_label": "Key-pair",
+      "description": "Key-pair for instance access"
+    },
+    "power_state": {
+      "type": "string",
+      "default": "active",
+      "enum": [
+        "active",
+        "shutoff",
+        "suspend",
+        "shelved_offloaded"
+      ],
+      "ui_label": "Power state",
+      "description": "Power state"
+    },
+    "ip_pool": {
+      "type": "cacao_provider_external_network",
+      "default": "external_network_name",
+      "ui_label": "IP pool",
+      "description": "IP pool"
+    },
+    "user_data": {
+      "type": "cacao_cloud_init",
+      "description": "cloud init script"
+    },
+    "k3s_traefik_disable": {
+      "type": "bool",
+      "required": false,
+      "description": "disable traefik ingress in k3s",
+      "ui_label": "disable traefik ingress?"
+    },
+    "gpu_enable": {
+      "type": "bool",
+      "required": false,
+      "description": "enable gpu components within jupyterhub",
+      "ui_label": "enable gpu"
+    }
+  }
+}
