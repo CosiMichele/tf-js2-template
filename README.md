@@ -50,11 +50,15 @@ Why destroy resources? Well, to ensure you don't waste allocation. Definitely de
 
 ---
 
-## Setting up your own Bastion host for OpenStack VMs Deployment
+## Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch 
 
-**This guide assumes you have access to [JetStream2 Horizon](https://js2.jetstream-cloud.org/auth/login/?next=/project/instances/) and have resources for your Project**
+⚠️**NOTE:** This guide assumes you have access to [JetStream2 (JS2) Horizon](https://js2.jetstream-cloud.org/auth/login/?next=/project/instances/) and have resources for your Project
 
-**Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements**
+1. In JS2 Horizon, create an `openrc` file by going to Application Credentials (in the left hand menu: Identity > Application Credentials > + Create Application Credential (on the right)). Download the generated file, rename it `openrc`.
+2. Create a m3.tiny VM. This will function as your host. Copy `openrc` to your machine.
+
+⚠️**NOTE:** Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements
+
 
 ```
 export TERRAFORM_VER=0.14.4  
