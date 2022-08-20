@@ -52,54 +52,45 @@ Why destroy resources? Well, to ensure you don't waste allocation. Definitely de
 
 ## Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch 
 
+### Getting the Bastion VM
 ⚠️**NOTE:** This guide assumes you have access to [JetStream2 (JS2) Horizon](https://js2.jetstream-cloud.org/auth/login/?next=/project/instances/) and have resources for your Project
 
 1. In JS2 Horizon, create an `openrc` file by going to Application Credentials (in the left hand menu: Identity > Application Credentials > + Create Application Credential (on the right)). Download the generated file, rename it `openrc`.
 2. Create a m3.tiny VM. This will function as your host. Copy `openrc` to your machine.
+3. Do `source openrc` (suggested to add to `bashrc`)
 
+### Setting up the prerequisites
 ⚠️**NOTE:** Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements
 
+From your Bastion, do the following commands in order to install the appropriate software:
+```
+$ export TERRAFORM_VER=0.14.4  
+$ export OPENSTACK_PROVIDER_VER=1.32.0  
+$ sudo apt-get install -qq -y --no-install-recommends wget zip ansible curl unzip   
+$ cd /tmp 
+$ wget https://releases.hashicorp.com/terraform/${TERRAFORM_VER}/terraform_${TERRAFORM_VER}_linux_amd64.zip 
+$ unzip terraform_${TERRAFORM_VER}_linux_amd64.zip  
+$ chmod +x ./terraform 
+$ sudo mv ./terraform /usr/bin 
+$ wget https://github.com/terraform-provider-openstack/terraform-provider-openstack/releases/download/v${OPENSTACK_PROVIDER_VER}/terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
+$ unzip terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip  # select Yes to if asked 
+$ chmod +x terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER}  
+$ sudo mkdir -p /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64 
+$ sudo mv terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER} /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64/  
+$ ansible-galaxy collection install ansible.posix 
+```
+Create an ssh key pair and copy the `.pub` (public) to horizon ((in the left hand menu: Compuyte > Key Pairs > Import Public Key (on the right)):
+```
+$ ssh-keygen -t rsa -b 4096 
+```
+Encode your key (necessary for instructor VMs); you will need to copy and paste this later.
+```
+$ openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub  
+```
+
+### Editing tfvars and deployment
 
 ```
-export TERRAFORM_VER=0.14.4  
-
-export OPENSTACK_PROVIDER_VER=1.32.0  
-
-sudo apt-get install -qq -y --no-install-recommends wget zip ansible curl unzip   
-
-cd /tmp 
-
-wget https://releases.hashicorp.com/terraform/${TERRAFORM_VER}/terraform_${TERRAFORM_VER}_linux_amd64.zip 
-
-unzip terraform_${TERRAFORM_VER}_linux_amd64.zip  
-
-chmod +x ./terraform 
-
-sudo mv ./terraform /usr/bin 
-
-wget https://github.com/terraform-provider-openstack/terraform-provider-openstack/releases/download/v${OPENSTACK_PROVIDER_VER}/terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
-
-unzip terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
-
-Yes if asked 
-
-chmod +x terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER}  
-
-sudo mkdir -p /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64 
-
-sudo mv terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER} /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64/  
-
-ansible-galaxy collection install ansible.posix 
-
-ssh-keygen -t rsa -b 4096 
-
-Copy key to Key Pair in horizon 
-
-openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub  
-
-Copy encoded key and use as intructor 
-
 cd cacao-tf-os-ops/vm4workshop
 ```
-
 Edit tfvars as necessary 
