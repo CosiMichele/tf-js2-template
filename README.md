@@ -47,3 +47,55 @@ To restart, just set the `power_state = active` and reapply terraform.
 Why destroy resources? Well, to ensure you don't waste allocation. Definitely destroy resources after the workshop has concluded. Use this command wisely.
 
 `terraform destroy` (or `terraform destroy -auto-approve` to bypass the confirmation step)
+
+---
+
+## Setting up your own Bastion host for OpenStack VMs Deployment
+
+**This guide assumes you have access to [JetStream2 Horizon](https://js2.jetstream-cloud.org/auth/login/?next=/project/instances/) and have resources for your Project**
+
+**Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements**
+
+```
+export TERRAFORM_VER=0.14.4  
+
+export OPENSTACK_PROVIDER_VER=1.32.0  
+
+sudo apt-get install -qq -y --no-install-recommends wget zip ansible curl unzip   
+
+cd /tmp 
+
+wget https://releases.hashicorp.com/terraform/${TERRAFORM_VER}/terraform_${TERRAFORM_VER}_linux_amd64.zip 
+
+unzip terraform_${TERRAFORM_VER}_linux_amd64.zip  
+
+chmod +x ./terraform 
+
+sudo mv ./terraform /usr/bin 
+
+wget https://github.com/terraform-provider-openstack/terraform-provider-openstack/releases/download/v${OPENSTACK_PROVIDER_VER}/terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
+
+unzip terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
+
+Yes if asked 
+
+chmod +x terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER}  
+
+sudo mkdir -p /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64 
+
+sudo mv terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER} /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64/  
+
+ansible-galaxy collection install ansible.posix 
+
+ssh-keygen -t rsa -b 4096 
+
+Copy key to Key Pair in horizon 
+
+openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub  
+
+Copy encoded key and use as intructor 
+
+cd cacao-tf-os-ops/vm4workshop
+```
+
+Edit tfvars as necessary 
