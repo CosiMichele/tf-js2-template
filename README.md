@@ -119,9 +119,9 @@ share_mount_path=""
 power_state = "active"
 
 # Total student 
-instance_instructor_count = 1
-student_usernames=["user1","user2","user3"]
-students_per_instance=2
+instance_instructor_count = 1                 # Number of instructor VMs
+student_usernames=["user1","user2","user3"]   # Names of student VMs, can be anything
+students_per_instance=2                       # Number of students per VM
 instructors_ssh_keys_base64=""                # Paste here the encoded SSH key you created
 do_generate_local_csv=true
 ```
