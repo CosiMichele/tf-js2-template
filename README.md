@@ -6,62 +6,22 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
 
 *ssh (in terraform.tfvars) and ID/Secret (in openrc) values have been removed for safety reasons.*
 
+:warning **Note: If this is your first time doing this, please start from [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch).
+
 ---
 
 Jump to:
-1. [Quickstart](#files-and-folders)
-    a. [Terraform](#terraform)
-    b. [Creating resources]()
-    c. [Stopping (and restarting) instances](#stopping-and-restarting-instances)
-    d. [Verifying current terraform state](#verifying-current-terraform-state)
-    e. [Destroying Resources](#destroying-resources)
-2. [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch)
-    a. [Getting the Bastion VM](#getting-the-bastion-vm)
-    b. [Setting up the prerequisites](#setting-up-the-prerequisites)
-    c. [Editing tfvars and deployment](#editing-tfvars-and-deployment)
----
 
-## Quickstart
-
-### Files and Folders
-The primary folder of interest is `/root/cacao-tf-os-ops`, which is a modified git clone of https://gitlab.com/cyverse/cacao-tf-os-ops, on branch `compbio2022-wheeler`. This will be merged into `main` branch shortly.
-
-In `cacao-tf-os-ops`, there are 3 folders of interest:
-* `create_share`: used to create the manila share
-* `vms4workshop-genomics`: used to create the CPU instances
-* `vms4workshop-md-screening`: used to create GPU instances
-
-The main configuration file will be `terraform.tfvars`. Unless you know what you're doing, only edit this file and rerun terraform plan/apply.
-
-### Terraform
-
-IMPORTANT: When using terraform be sure to execute `terraform` command within the directory containing the `terraform.tfvars` file i.e. `vms4workshop-genomics` and `vms4workshop-md-screening` folders.
-
-### Creating Resources
-After editing the appropriate `terraform.tfvars` file using your favorite editor. You can run the following:
-
-1. `terraform plan -out plan.out`
-2. `terraform apply plan.out`
-
-If you want an all-in-one command, just run `terraform plan -out plan.out && terraform apply plan.out`. Note, the reason why some folks will separate these steps out is just to review what changes will be made before committing to the changes in a `terraform plan` step.
-
-### Stopping (and restarting) instances
-Why stop instances? To conserve allocation without destroying them.
-
-1. edit `terraform.tfvars` and set `power_state = "shutoff"`.
-2. `terraform plan -out plan.out && terraform apply plan.out`
-
-To restart, just set the `power_state = active` and reapply terraform.
-
-### Verifying current terraform state
-
-* `terraform show`: to verify if there are currently resources deployed with the template
-* `terraform output`: to display any output variables, assuming there are currently resources deployed with the template
-
-### Destroying Resources
-Why destroy resources? Well, to ensure you don't waste allocation. Definitely destroy resources after the workshop has concluded. Use this command wisely.
-
-`terraform destroy` (or `terraform destroy -auto-approve` to bypass the confirmation step)
+1. [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch)
+    1. [Getting the Bastion VM](#getting-the-bastion-vm)
+    2. [Setting up the prerequisites](#setting-up-the-prerequisites)
+    3. [Editing tfvars and deployment](#editing-tfvars-and-deployment)
+2. [Usage Instructions](#usage-instructions)
+    1. [Terraform](#terraform)
+    2. [Creating resources](#creating-resources)
+    3. [Stopping (and restarting) instances](#stopping-and-restarting-instances)
+    4. [Verifying current terraform state](#verifying-current-terraform-state)
+    5. [Destroying Resources](#destroying-resources)
 
 ---
 
@@ -109,3 +69,49 @@ $ openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub
 cd cacao-tf-os-ops/vm4workshop
 ```
 Edit tfvars as necessary 
+
+---
+
+## Usage Instructions
+
+### Files and Folders
+The primary folder of interest is `/root/cacao-tf-os-ops`, which is a modified git clone of https://gitlab.com/cyverse/cacao-tf-os-ops, on branch `compbio2022-wheeler`. This will be merged into `main` branch shortly.
+
+In `cacao-tf-os-ops`, there are 3 folders of interest:
+* `create_share`: used to create the manila share
+* `vms4workshop-genomics`: used to create the CPU instances
+* `vms4workshop-md-screening`: used to create GPU instances
+
+The main configuration file will be `terraform.tfvars`. Unless you know what you're doing, only edit this file and rerun terraform plan/apply.
+
+### Terraform
+
+IMPORTANT: When using terraform be sure to execute `terraform` command within the directory containing the `terraform.tfvars` file i.e. `vms4workshop-genomics` and `vms4workshop-md-screening` folders.
+
+### Creating Resources
+After editing the appropriate `terraform.tfvars` file using your favorite editor. You can run the following:
+
+1. `terraform plan -out plan.out`
+2. `terraform apply plan.out`
+
+If you want an all-in-one command, just run `terraform plan -out plan.out && terraform apply plan.out`. Note, the reason why some folks will separate these steps out is just to review what changes will be made before committing to the changes in a `terraform plan` step.
+
+### Stopping (and restarting) instances
+Why stop instances? To conserve allocation without destroying them.
+
+1. edit `terraform.tfvars` and set `power_state = "shutoff"`.
+2. `terraform plan -out plan.out && terraform apply plan.out`
+
+To restart, just set the `power_state = active` and reapply terraform.
+
+### Verifying current terraform state
+
+* `terraform show`: to verify if there are currently resources deployed with the template
+* `terraform output`: to display any output variables, assuming there are currently resources deployed with the template
+
+### Destroying Resources
+Why destroy resources? Well, to ensure you don't waste allocation. Definitely destroy resources after the workshop has concluded. Use this command wisely.
+
+`terraform destroy` (or `terraform destroy -auto-approve` to bypass the confirmation step)
+
+---
