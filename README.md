@@ -31,8 +31,16 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
 ⚠️**NOTE:** This guide assumes you have access to [JetStream2 (JS2) Horizon](https://js2.jetstream-cloud.org/auth/login/?next=/project/instances/) and have resources for your Project
 
 1. In JS2 Horizon, create an `openrc` file by going to Application Credentials (in the left hand menu: Identity > Application Credentials > + Create Application Credential (on the right)). Download the generated file, rename it `openrc`.
-2. Create a m3.tiny VM. This will function as your host. Copy `openrc` to your machine.
-3. Do `source openrc` (suggested to add to `bashrc`)
+2. Create a m3.tiny VM (under Source) (this will function as your host). The minimum requirements are:
+    - A name (Details > Instance Name)
+    - Ubuntu 20 (Source)
+    - Key Pair
+        - To crate a Key Pair:
+            1. On your computer, generate an ssh key with `ssh-keygen -t rsa -b 4096`
+            2. Copy the public key to Identity > Key Pair
+            3. Give it an appropriate name
+3. Copy `openrc` to your machine.
+4. Do `source openrc` (suggested to add to `bashrc`)
 
 ### Setting up the prerequisites
 ⚠️**NOTE:** Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements
