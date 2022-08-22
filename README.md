@@ -6,11 +6,11 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
 
 *ssh (in terraform.tfvars) and ID/Secret (in openrc) values have been removed for safety reasons.*
 
-:warning **Note: If this is your first time doing this, please start from [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch).
+:warning: **Note: If this is your first time doing this, please start from [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch).
 
 ---
 
-Jump to:
+**Sections**:
 
 1. [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch)
     1. [Getting the Bastion VM](#getting-the-bastion-vm)
@@ -38,22 +38,34 @@ Jump to:
 ⚠️**NOTE:** Follow the steps at the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) for software pre-requirements
 
 From your Bastion, do the following commands in order to install the appropriate software:
+
 ```
+# Export necessary versions
 $ export TERRAFORM_VER=0.14.4  
-$ export OPENSTACK_PROVIDER_VER=1.32.0  
+$ export OPENSTACK_PROVIDER_VER=1.32.0
+
+# Install necessary packages
 $ sudo apt-get install -qq -y --no-install-recommends wget zip ansible curl unzip   
+
 $ cd /tmp 
+
+# Download and install Terraform
 $ wget https://releases.hashicorp.com/terraform/${TERRAFORM_VER}/terraform_${TERRAFORM_VER}_linux_amd64.zip 
 $ unzip terraform_${TERRAFORM_VER}_linux_amd64.zip  
 $ chmod +x ./terraform 
-$ sudo mv ./terraform /usr/bin 
+$ sudo mv ./terraform /usr/bin
+
+# Download and install OpenStack
 $ wget https://github.com/terraform-provider-openstack/terraform-provider-openstack/releases/download/v${OPENSTACK_PROVIDER_VER}/terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip 
 $ unzip terraform-provider-openstack_${OPENSTACK_PROVIDER_VER}_linux_amd64.zip  # select Yes to if asked 
 $ chmod +x terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER}  
 $ sudo mkdir -p /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64 
 $ sudo mv terraform-provider-openstack_v${OPENSTACK_PROVIDER_VER} /$USER/.terraform.d/plugins/terraform.cyverse.org/cyverse/openstack/${OPENSTACK_PROVIDER_VER}/linux_amd64/  
+
+# Install Ansible related requirements
 $ ansible-galaxy collection install ansible.posix 
 ```
+
 Create an ssh key pair and copy the `.pub` (public) to horizon ((in the left hand menu: Compuyte > Key Pairs > Import Public Key (on the right)):
 ```
 $ ssh-keygen -t rsa -b 4096 
