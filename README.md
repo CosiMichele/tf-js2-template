@@ -6,6 +6,21 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
 
 *ssh (in terraform.tfvars) and ID/Secret (in openrc) values have been removed for safety reasons.*
 
+---
+
+Jump to:
+1. [Quickstart](#files-and-folders)
+    a. [Terraform](#terraform)
+    b. [Creating resources]()
+    c. [Stopping (and restarting) instances](#stopping-and-restarting-instances)
+    d. [Verifying current terraform state](#verifying-current-terraform-state)
+    e. [Destroying Resources](#destroying-resources)
+2. [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch)
+    a. [Getting the Bastion VM](#getting-the-bastion-vm)
+    b. [Setting up the prerequisites](#setting-up-the-prerequisites)
+    c. [Editing tfvars and deployment](#editing-tfvars-and-deployment)
+---
+
 ## Quickstart
 
 ### Files and Folders
