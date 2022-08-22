@@ -132,14 +132,6 @@ do_generate_local_csv=true
 
 ## Usage Instructions
 
-### Files and Folders
-The primary folder of interest is `/root/cacao-tf-os-ops`, which is a modified git clone of https://gitlab.com/cyverse/cacao-tf-os-ops, on branch `compbio2022-wheeler`. This will be merged into `main` branch shortly.
-
-In `cacao-tf-os-ops`, there are 3 folders of interest:
-* `create_share`: used to create the manila share
-* `vms4workshop-genomics`: used to create the CPU instances
-* `vms4workshop-md-screening`: used to create GPU instances
-
 The main configuration file will be `terraform.tfvars`. Unless you know what you're doing, only edit this file and rerun terraform plan/apply.
 
 ### Terraform
