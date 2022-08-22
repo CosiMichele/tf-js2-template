@@ -1,7 +1,5 @@
 # Terraform JS2 Deployment instructions
 
-**Do not clone this repository, instead clone https://gitlab.com/cyverse/cacao-tf-os-ops**
-
 Through a running bastion host, one can control (launch, shut down, restart) a number of VMs on the JS2 architecture.
 
 *ssh (in terraform.tfvars) and ID/Secret (in openrc) values have been removed for safety reasons.*
@@ -22,7 +20,7 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
     3. [Stopping (and restarting) instances](#stopping-and-restarting-instances)
     4. [Verifying current terraform state](#verifying-current-terraform-state)
     5. [Destroying Resources](#destroying-resources)
-
+3. [Accessing your deployed VMs](#accessing-your-deployed-vms)
 ---
 
 ## Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch 
@@ -39,15 +37,15 @@ Through a running bastion host, one can control (launch, shut down, restart) a n
         2. Copy the public key to Compute > Key Pairs > Import Public Key
         3. Under your Instances, associate a floating IP address under the Actions drop-down menu.
 3. Copy `openrc` to your machine.
-4. Do `source openrc` (suggested to add the source command to `bashrc`)
+4. Do `source openrc` (suggested to add the source command to `bashrc`. **If you do not add `source openrc` to bashrc, then you will have to source every time you will connect to the VM.**)
 
 ### Setting up the prerequisites
 ⚠️**NOTE:** See [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/) further instructions
 
-From your Bastion, clone the cacao-tf-os-ops git lab:
+From your Bastion, clone this repository:
 
 ```
-$ git clone https://gitlab.com/cyverse/cacao-tf-os-ops.git
+$ git clone https://github.com/CosiMichele/tf-js2-template.git
 ```
 
 Do the following commands in order to install the appropriate software:
@@ -91,7 +89,7 @@ $ openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub
 ### Editing tfvars and deployment
 
 ```
-$ cd ~/cacao-tf-os-ops/vms4workshop
+$ cd tf-js2-template/cacao-tf-os-ops/vms4workshop
 
 # Copy terraform.tfvars.example and rename the copy terraform.tfvars
 $ cp terraform.tfvars.example terraform.tfvars
@@ -136,7 +134,7 @@ The main configuration file will be `terraform.tfvars`. Unless you know what you
 
 ### Terraform
 
-IMPORTANT: When using terraform be sure to execute `terraform` command within the directory containing the `terraform.tfvars` file i.e. `vms4workshop-genomics` and `vms4workshop-md-screening` folders.
+IMPORTANT: When using terraform be sure to execute `terraform` command within the directory containing the `terraform.tfvars` file i.e. `vms4workshop`.
 
 ### Creating Resources
 After editing the appropriate `terraform.tfvars` file using your favorite editor. You can run the following:
@@ -165,3 +163,24 @@ Why destroy resources? Well, to ensure you don't waste allocation. Definitely de
 `terraform destroy` (or `terraform destroy -auto-approve` to bypass the confirmation step)
 
 ---
+
+## Accessing your deployed VMs
+
+A CSV file will be generated in the folder where the user carried out the `terraform` commands. Below is an example:
+
+```
+user,password,instance_name,ip_address,local_vnc_port
+instructor,xnqIQ$sensibly$easy$haddock,esiil-instructor,149.165.155.164,5906
+user1,p2Gka$fully$mature$duckling,esiil-student0,149.165.152.63,5906
+user2,Gx7OE$deeply$amazed$lamprey,esiil-student0,149.165.152.63,5907
+user3,qqCVt$remotely$cosmic$sawfish,esiil-student1,149.165.154.6,5906
+```
+
+Each line after the header is the information for each single user. One connects to a VM by doing
+
+```
+$ ssh <user_number/instructor>@<IP>
+```
+Use the password generated when prompted.
+
+Distribute the credentials from the CSV file as needed.
