@@ -52,7 +52,7 @@ Do the following commands in order to install the appropriate software:
 
 ```
 # Export necessary versions
-$ export TERRAFORM_VER=0.14.4  
+$ export TERRAFORM_VER=1.2.1  
 $ export OPENSTACK_PROVIDER_VER=1.32.0
 
 # Install necessary packages
@@ -125,6 +125,8 @@ students_per_instance=2                       # Number of students per VM
 instructors_ssh_keys_base64=""                # Paste here the encoded SSH key you created
 do_generate_local_csv=true
 ```
+
+In the same folder, initiate terraform `terraform init`.
 
 ---
 
