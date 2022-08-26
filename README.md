@@ -2,13 +2,13 @@
 
 Through a running bastion host, one can control (launch, shut down, restart) a number of VMs on the JS2 architecture.
 
-*ssh (in terraform.tfvars) and ID/Secret (in openrc) values have been removed for safety reasons.*
-
-:warning: **Note: If this is your first time doing this, please start from [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch).
+This repository is a close clone of the [cacao terraform-openstack gitlab page](https://gitlab.com/cyverse/cacao-tf-os-ops/-/tree/main/), now being integrated in [CACAO](https://cacao.jetstream-cloud.org/) ([CACAO documentation](https://docs.jetstream-cloud.org/)).
 
 ---
 
 **Sections**:
+
+:warning: **Note: If this is your first time doing this, please start from ["1. Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch"](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch).**
 
 1. [Setting up your own Bastion host for OpenStack VMs Deployment: starting from stratch](#setting-up-your-own-bastion-host-for-openstack-vms-deployment-starting-from-stratch)
     1. [Getting the Bastion VM](#getting-the-bastion-vm)
