@@ -89,7 +89,7 @@ $ openssl enc -base64 -in id_rsa.pub -out id_rsa_enc.pub
 ### Editing tfvars and deployment
 
 ```
-$ cd tf-js2-template/cacao-tf-os-ops/vms4workshop
+$ cd ~/tf-js2-template/cacao-tf-os-ops/vms4workshop
 
 # Copy terraform.tfvars.example and rename the copy terraform.tfvars
 $ cp terraform.tfvars.example terraform.tfvars
