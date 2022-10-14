@@ -100,7 +100,7 @@ Edit tfvars as necessary (below is an example with explainations)
 ```
 # openstack info
 project = "TG-CIS220026"                       # Name of your project on JS2
-security_groups = ["default"]                  # Do not modify if no other security group was created
+security_groups = ["default"]                  # Modify to cacao-default
 instance_name = "esiil"                        # What you want your VMs to be called
 username = "cosi" 
 image = "fb37f2eb-101c-46ee-8a7e-ac3e9b910671" # Image ID on JetStream, this is equivalent as the Ubuntu 20. You can find the ID by clicking on the arrow left of the Image name in the Images page.
